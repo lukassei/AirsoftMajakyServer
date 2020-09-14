@@ -45,27 +45,10 @@
                         <ColumnDefinition Width="592*"/>
                     </Grid.ColumnDefinitions>
                     <Grid.RowDefinitions>
-                        <RowDefinition Height="36*"/>
-                        <RowDefinition Height="47*"/>
-                        <RowDefinition Height="43*"/>
-                        <RowDefinition Height="44*"/>
-                        <RowDefinition Height="42*"/>
-                        <RowDefinition Height="43*"/>
-                        <RowDefinition Height="288*"/>
+                        <RowDefinition Height="40"/>
                     </Grid.RowDefinitions>
-                    <TextBlock Grid.Row="1" Grid.Column="0" Text="Spojení - maják 1" VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="15" Margin="53,14,53,13" />
-                    <TextBlock Grid.Row="2" Grid.Column="0" Text="Spojení - maják 2" VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="15" Margin="53,12,53,11" />
-                    <TextBlock Grid.Row="3" Grid.Column="0" Text="Spojení - maják 3" VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="15" Margin="53,12" />
-                    <TextBlock Grid.Row="4" Grid.Column="0" Text="Spojení - maják 4" VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="15" Margin="53,11" />
-                    <TextBlock Grid.Row="5" Grid.Column="0" Text="Spojení - maják 5" VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="15" Margin="53,11" />
 
-                    <TextBlock Name="majak1_spojeni" Grid.Row="1" Grid.Column="1" Text="---" VerticalAlignment="Center" HorizontalAlignment="Left" FontSize="15" Margin="0,14,0,13" />
-                    <TextBlock Name="majak2_spojeni" Grid.Row="2" Grid.Column="1" Text="---" VerticalAlignment="Center" HorizontalAlignment="Left" FontSize="15" Margin="0,12,0,11" />
-                    <TextBlock Name="majak3_spojeni" Grid.Row="3" Grid.Column="1" Text="---" VerticalAlignment="Center" HorizontalAlignment="Left" FontSize="15" Margin="0,12" />
-                    <TextBlock Name="majak4_spojeni" Grid.Row="4" Grid.Column="1" Text="---" VerticalAlignment="Center" HorizontalAlignment="Left" FontSize="15" Margin="0,11" />
-                    <TextBlock Name="majak5_spojeni" Grid.Row="5" Grid.Column="1" Text="---" VerticalAlignment="Center" HorizontalAlignment="Left" FontSize="15" Margin="0,11" />
-
-                    <TextBlock Grid.Row="6" Grid.ColumnSpan="2" Text="Stav majáků je automaticky kontrolován a aktualizován jednou za 20 vteřin." VerticalAlignment="Bottom" HorizontalAlignment="Center" Margin="159,0,158,15" FontSize="15" />
+                    <TextBlock Grid.Row="0" Grid.ColumnSpan="2" Text="Stav majáků je automaticky kontrolován a aktualizován jednou za 20 vteřin." VerticalAlignment="Bottom" HorizontalAlignment="Center" Margin="161,0,156,10" FontSize="15" />
                 </Grid>
             </TabItem>
             <TabItem Header="Nastavení">
