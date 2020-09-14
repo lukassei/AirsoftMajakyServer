@@ -200,17 +200,23 @@ namespace Airsoft_Majaky
 
 
 
-                TextBlock MajakID = new TextBlock();
-                MajakID.Text = string.Format("Maják {0}", m.ID);
-                MajakID.FontSize = 23;
-                MajakID.VerticalAlignment = VerticalAlignment.Center;
-                MajakID.HorizontalAlignment = HorizontalAlignment.Center;
+                //TextBlock MajakID = new TextBlock();
+                //MajakID.Text = string.Format("Maják {0}", m.ID);
+                //MajakID.FontSize = 23;
+                //MajakID.VerticalAlignment = VerticalAlignment.Center;
+                //MajakID.HorizontalAlignment = HorizontalAlignment.Center;
+
+                Button ButtonMajakID = new Button();
+                ButtonMajakID.Content = string.Format("Maják {0}", m.ID);
+                ButtonMajakID.FontSize = 23;
+                ButtonMajakID.Background = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#FFFBFBB1"));
+                ButtonMajakID.Click += ButtonMajakID_Click;
 
                 Border BorderMajakID = new Border();
                 BorderMajakID.BorderThickness = new Thickness(2,1,1,1);
                 BorderMajakID.BorderBrush = new SolidColorBrush(Colors.Black);
-                BorderMajakID.Background = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#FFFBFBB1"));
-                BorderMajakID.Child = MajakID;
+                //BorderMajakID.Background = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#FFFBFBB1"));
+                BorderMajakID.Child = ButtonMajakID;
                 Grid.SetColumn(BorderMajakID, 0);
                 Grid.SetRow(BorderMajakID, m.ID);
 
@@ -276,6 +282,13 @@ namespace Airsoft_Majaky
                 grid2.Children.Add(MajakSpojeni);
             });
 
+        }
+
+        private void ButtonMajakID_Click(object sender, RoutedEventArgs e)
+        {
+            //throw new NotImplementedException();
+            Button b = (Button)sender;
+            MessageBox.Show(string.Format("Kliknul jste na: {0}", b.Content));
         }
     }
 }
