@@ -250,6 +250,30 @@ namespace Airsoft_Majaky
                 grid1.Children.Add(BorderMajakID);
                 grid1.Children.Add(BorderStopwatchBlue);
                 grid1.Children.Add(BorderStopwatchRed);
+
+                RowDefinition gridRow2 = new RowDefinition();
+                gridRow2.Height = new GridLength(40);
+                grid2.RowDefinitions.Add(gridRow2);
+
+                TextBlock MajakSpojeniTxt = new TextBlock();
+                MajakSpojeniTxt.Text = string.Format("Spojení - maják {0}", m.ID);
+                MajakSpojeniTxt.FontSize = 15;
+                MajakSpojeniTxt.VerticalAlignment = VerticalAlignment.Center;
+                MajakSpojeniTxt.HorizontalAlignment = HorizontalAlignment.Center;
+                Grid.SetColumn(MajakSpojeniTxt, 0);
+                Grid.SetRow(MajakSpojeniTxt, m.ID);
+
+                TextBlock MajakSpojeni = new TextBlock();
+                MajakSpojeni.Text = "---";
+                MajakSpojeni.FontSize = 15;
+                MajakSpojeni.VerticalAlignment = VerticalAlignment.Center;
+                MajakSpojeni.HorizontalAlignment = HorizontalAlignment.Left;
+                MajakSpojeni.Name = string.Format("majak{0}_spojeni", m.ID);
+                Grid.SetColumn(MajakSpojeni, 1);
+                Grid.SetRow(MajakSpojeni, m.ID);
+                grid2.RegisterName(MajakSpojeni.Name, MajakSpojeni);
+                grid2.Children.Add(MajakSpojeniTxt);
+                grid2.Children.Add(MajakSpojeni);
             });
 
         }
