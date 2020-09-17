@@ -62,6 +62,8 @@ namespace Airsoft_Majaky
         public string MACAddress { get; set; }
         public Stopwatch Red_StopWatch { get; set; }
         public Stopwatch Blue_StopWatch { get; set; }
+        public double BlueTimeInSeconds { get; set; }
+        public double RedTimeInSeconds { get; set; }
         public Majak(TcpClient _client)
         {
             Client = _client;
@@ -69,6 +71,8 @@ namespace Airsoft_Majaky
             Red_StopWatch = new Stopwatch();
             Blue_StopWatch = new Stopwatch();
             Color = "N";
+            BlueTimeInSeconds = 0;
+            RedTimeInSeconds = 0;
         }
         public void StopwatchStop()
         {
@@ -97,6 +101,8 @@ namespace Airsoft_Majaky
         {
             Red_StopWatch.Reset();
             Blue_StopWatch.Reset();
+            BlueTimeInSeconds = 0;
+            RedTimeInSeconds = 0;
         }
     }
 }

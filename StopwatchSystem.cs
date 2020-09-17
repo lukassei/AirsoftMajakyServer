@@ -137,6 +137,10 @@ namespace Airsoft_Majaky
             {
                 App.Current.Dispatcher.Invoke((Action)delegate // <--- HERE
                 {
+                    double CompleteBlueTimeInSeconds = 0;
+                    double CompleteRedTimeInSeconds = 0;
+                    TimeSpan CompleteBlueTime = new TimeSpan();
+                    TimeSpan CompleteRedTime = new TimeSpan();
                     foreach (Majak m in Comunication.activeClients)
                     {
                         TextBlock t_m = (TextBlock)__mw.grid1.FindName(string.Format("majak{0}_modry", m.ID));
@@ -147,7 +151,16 @@ namespace Airsoft_Majaky
                             t_m.Text = m.Blue_StopWatch.Elapsed.ToString("hh\\:mm\\:ss\\.f");
                             t_r.Text = m.Red_StopWatch.Elapsed.ToString("hh\\:mm\\:ss\\.f");
                         }
+                        CompleteBlueTimeInSeconds += TimeSpan.Parse(m.Blue_StopWatch.Elapsed.ToString("hh\\:mm\\:ss")).TotalSeconds;
+                        CompleteRedTimeInSeconds += m.Red_StopWatch.Elapsed.TotalSeconds;
+                        CompleteBlueTime = CompleteBlueTime.Add(m.Blue_StopWatch.Elapsed);
+                        CompleteRedTime = CompleteRedTime.Add(m.Red_StopWatch.Elapsed);
+
+                        
+
                     }
+                    __mw.CompleteBlueTime_txt.Text = string.Format("{0} ({1})", CompleteBlueTime.ToString("hh\\:mm\\:ss\\.f"), Math.Floor(CompleteBlueTimeInSeconds));
+                    __mw.CompleteRedTime_txt.Text = string.Format("{0} ({1})", CompleteRedTime.ToString("hh\\:mm\\:ss\\.f"), Math.Floor(CompleteRedTimeInSeconds));
                     __mw.delkahry.Text = delkahry_stopky.Elapsed.ToString("hh\\:mm\\:ss\\.f");
                 
                 });

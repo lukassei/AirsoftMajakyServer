@@ -64,7 +64,7 @@ namespace Airsoft_Majaky
                     }
                 }
                 // replace the IP with your system IP Address...
-                Comunication CC = new Comunication(ipaddres, 10500, this);
+                Comunication CC = new Comunication(ipaddres, 11800, this);
             });
             t.IsBackground = true;
             t.Start();
@@ -212,7 +212,7 @@ namespace Airsoft_Majaky
                 BorderMajakID.Background = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#FFFBFBB1"));
                 BorderMajakID.Child = MajakID;
                 Grid.SetColumn(BorderMajakID, 0);
-                Grid.SetRow(BorderMajakID, m.ID);
+                Grid.SetRow(BorderMajakID, m.ID + 1);
 
                 TextBlock StopwatchBlue = new TextBlock();
                 StopwatchBlue.Text = "xxx";
@@ -227,7 +227,7 @@ namespace Airsoft_Majaky
                 BorderStopwatchBlue.Background = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#FFE5F7FB"));
                 BorderStopwatchBlue.Child = StopwatchBlue;
                 Grid.SetColumn(BorderStopwatchBlue, 1);
-                Grid.SetRow(BorderStopwatchBlue, m.ID);
+                Grid.SetRow(BorderStopwatchBlue, m.ID + 1);
 
                 TextBlock StopwatchRed = new TextBlock();
                 StopwatchRed.Text = "xxx";
@@ -243,7 +243,7 @@ namespace Airsoft_Majaky
                 BorderStopwatchRed.Background = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#FFFBDDDC"));
                 BorderStopwatchRed.Child = StopwatchRed;
                 Grid.SetColumn(BorderStopwatchRed, 2);
-                Grid.SetRow(BorderStopwatchRed, m.ID);
+                Grid.SetRow(BorderStopwatchRed, m.ID + 1);
 
                 grid1.RegisterName(StopwatchBlue.Name, StopwatchBlue);
                 grid1.RegisterName(StopwatchRed.Name, StopwatchRed);
