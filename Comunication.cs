@@ -314,11 +314,18 @@ namespace Airsoft_Majaky
                             {
                                 m.isConnected = false;
                                 m.Client.Close();
+                                if(m.ID == 0)
+                                {
+                                    activeClients.Remove(m);
+                                }
                                 App.Current.Dispatcher.Invoke((Action)delegate // <--- HERE
                                 {
                                     TextBlock t_s = (TextBlock)_mw.grid2.FindName(String.Format("majak{0}_spojeni", m.ID));
-                                    t_s.Text = string.Format("Maják není připojen.");
-                                    t_s.Foreground = System.Windows.Media.Brushes.Red;
+                                    if(t_s != null)
+                                    {
+                                        t_s.Text = string.Format("Maják není připojen.");
+                                        t_s.Foreground = System.Windows.Media.Brushes.Red;
+                                    }
                                 });
                             }
                             else //Pokud je připojení v pořádku a client odpověděl, tak aktualizuj stav na záložce kontrola spojení v MainWindow
@@ -333,8 +340,11 @@ namespace Airsoft_Majaky
                                 App.Current.Dispatcher.Invoke((Action)delegate // <--- HERE
                                 {
                                     TextBlock t_s = (TextBlock)_mw.grid2.FindName(String.Format("majak{0}_spojeni", m.ID));
-                                    t_s.Text = string.Format("Maják připojen. - Barva majáku: {0}", barva);
-                                    t_s.Foreground = System.Windows.Media.Brushes.Green;
+                                    if(t_s != null)
+                                    {
+                                        t_s.Text = string.Format("Maják připojen. - Barva majáku: {0}", barva);
+                                        t_s.Foreground = System.Windows.Media.Brushes.Green;
+                                    }
                                 });                               
                             }
                         }

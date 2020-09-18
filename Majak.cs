@@ -71,6 +71,7 @@ namespace Airsoft_Majaky
             Red_StopWatch = new Stopwatch();
             Blue_StopWatch = new Stopwatch();
             Color = "N";
+            ID = 0;
             BlueTimeInSeconds = 0;
             RedTimeInSeconds = 0;
         }

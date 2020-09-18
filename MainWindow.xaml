@@ -81,6 +81,7 @@
                     <Button Name="ObnovitHru" Grid.Row="1" Grid.Column="1" Content="Obnovit hru" FontSize="18" Margin="3" Background="#FFF9C477" Click="ObnovitHru_Click"/>
                     <Button Name="UkoncitHru" Grid.Row="2" Grid.Column="0" Content="Ukončit hru" FontSize="18" Margin="3" Background="#FFF09389" Click="UkoncitHru_Click"/>
                     <Button Name="AutomatickeUkonceniHry" Grid.Row="0" Grid.Column="2" Content="Automatické ukončení hry" FontSize="18" Margin="3" Background="#FFA68346" Click="AutomatickeUkonceniHry_Click"/>
+                    <TextBlock Text="Vytvořil Lukáš Seidler© (lukas.sei@seznam.cz) - Další šíření je povoleno pouze po předešlé domluvě." FontSize="15" Grid.ColumnSpan="3" Margin="76,76.4,-76,-76.4" Grid.Row="4"/>
                 </Grid>
             </TabItem>
         </TabControl>
