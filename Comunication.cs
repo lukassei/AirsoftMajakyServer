@@ -101,13 +101,14 @@ namespace Airsoft_Majaky
             //split data by ":"
             Request r = null;
             string[] datasplt = req.Data.Split('?');
-            switch(datasplt[0]){
+            switch (datasplt[0])
+            {
                 case "CNN": //upravit aby pracoval s MAC adresou
                     //string format  CNN:{MACAddress}
                     bool found = false;
-                    foreach(Majak m in activeClients.ToList<Majak>())
+                    foreach (Majak m in activeClients.ToList<Majak>())
                     {
-                        if(m.MACAddress == datasplt[1])
+                        if (m.MACAddress == datasplt[1])
                         {
                             req.Sender.Color = m.Color;
                             req.Sender.ID = m.ID;
@@ -136,24 +137,47 @@ namespace Airsoft_Majaky
                     break;
                 case "CHGTM":
                     //zavolat změnu týmu
-                    if(StopwatchSystem.ChangeTeam(int.Parse(datasplt[1]), datasplt[2]))
+                    if (StopwatchSystem.ChangeTeam(int.Parse(datasplt[1]), datasplt[2]))
                     {
                         r = new Request(2, req.Sender); //pokud je hra zapnutá dojde ke změnění majáku a odešle se potvrzení arduinu 
                         RequestsToRespond.Add(r);
                     }
                     else
                     {
-                        if(MainWindow.isGameRunning == 2)
+                        if (MainWindow.isGameRunning == 2)
                         {
                             r = new Request(4, req.Sender); //Pokud je hra pozastavená nedojde ke změně majáku a odešle se zpráva arduinu, že hra neběží
                             RequestsToRespond.Add(r);
                         }
-                        else if(MainWindow.isGameRunning == 0)
+                        else if (MainWindow.isGameRunning == 0)
                         {
                             r = new Request(7, req.Sender); //Pokud je hra vypnutá nedojde ke změně majáku a odešle se zpráva arduinu, že hra neběží
                             RequestsToRespond.Add(r);
                         }
                     }
+                    break;
+                case "TMCR": //TMCR?ID?Barva pro přidání času navíc?čas v milisecundách!
+                    //korekce času kvůli chybě ve spojení
+                        if (req.Sender.ID == int.Parse(datasplt[1]))
+                        {
+                            if (datasplt[2] == "R")
+                            {
+                                req.Sender.Red_TimeSpan = req.Sender.Red_TimeSpan.Add(TimeSpan.FromMilliseconds(Convert.ToDouble(datasplt[3])));
+                                req.Sender.Blue_TimeSpan = req.Sender.Blue_TimeSpan.Subtract(TimeSpan.FromMilliseconds(Convert.ToDouble(datasplt[3])));
+                            }
+                            else if (datasplt[2] == "B")
+                            {
+                                req.Sender.Red_TimeSpan = req.Sender.Red_TimeSpan.Subtract(TimeSpan.FromMilliseconds(Convert.ToDouble(datasplt[3])));
+                                req.Sender.Blue_TimeSpan = req.Sender.Blue_TimeSpan.Add(TimeSpan.FromMilliseconds(Convert.ToDouble(datasplt[3])));
+                            }
+                            else if (datasplt[2] == "N")
+                            {
+                                req.Sender.Red_TimeSpan = req.Sender.Red_TimeSpan.Subtract(TimeSpan.FromMilliseconds(Convert.ToDouble(datasplt[3])));
+                                req.Sender.Blue_TimeSpan = req.Sender.Blue_TimeSpan.Subtract(TimeSpan.FromMilliseconds(Convert.ToDouble(datasplt[3])));
+                            }
+                        }
+                    r = new Request(9, req.Sender);
+                    RequestsToRespond.Add(r);
                     break;
             }
         }
@@ -269,6 +293,18 @@ namespace Airsoft_Majaky
                     case 8:
                         response = String.Empty;
                         response = "PING:!";
+                        response_byte = null;
+                        response_byte = System.Text.Encoding.ASCII.GetBytes(response);
+                        try
+                        {
+                            m.Client.GetStream().Write(response_byte, 0, response_byte.Length);
+                            m.Client.GetStream().Flush();
+                        }
+                        catch { }
+                        break;
+                    case 9:
+                        response = String.Empty;
+                        response = "TMCR:CFM:!";
                         response_byte = null;
                         response_byte = System.Text.Encoding.ASCII.GetBytes(response);
                         try

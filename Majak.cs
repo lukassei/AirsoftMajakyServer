@@ -61,7 +61,9 @@ namespace Airsoft_Majaky
         }
         public string MACAddress { get; set; }
         public Stopwatch Red_StopWatch { get; set; }
+        public TimeSpan Red_TimeSpan { get; set; }
         public Stopwatch Blue_StopWatch { get; set; }
+        public TimeSpan Blue_TimeSpan { get; set; }
         public double BlueTimeInSeconds { get; set; }
         public double RedTimeInSeconds { get; set; }
         public Majak(TcpClient _client)
@@ -74,6 +76,22 @@ namespace Airsoft_Majaky
             ID = 0;
             BlueTimeInSeconds = 0;
             RedTimeInSeconds = 0;
+            Red_TimeSpan = new TimeSpan();
+            Blue_TimeSpan = new TimeSpan();
+        }
+        public TimeSpan ReturnRedTime()
+        {
+            TimeSpan t = new TimeSpan();
+            t = t.Add(Red_StopWatch.Elapsed);
+            t = t.Add(Red_TimeSpan);
+            return t;
+        }
+        public TimeSpan ReturnBlueTime()
+        {
+            TimeSpan t = new TimeSpan();
+            t = t.Add(Blue_StopWatch.Elapsed);
+            t = t.Add(Blue_TimeSpan);
+            return t;
         }
         public void StopwatchStop()
         {

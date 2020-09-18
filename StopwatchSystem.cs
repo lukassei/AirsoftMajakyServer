@@ -148,13 +148,13 @@ namespace Airsoft_Majaky
 
                         if (t_m != null && t_r != null)
                         {
-                            t_m.Text = m.Blue_StopWatch.Elapsed.ToString("hh\\:mm\\:ss\\.f");
-                            t_r.Text = m.Red_StopWatch.Elapsed.ToString("hh\\:mm\\:ss\\.f");
+                            t_m.Text = m.ReturnBlueTime().ToString("hh\\:mm\\:ss\\.f");
+                            t_r.Text = m.ReturnRedTime().ToString("hh\\:mm\\:ss\\.f");
                         }
-                        CompleteBlueTimeInSeconds += TimeSpan.Parse(m.Blue_StopWatch.Elapsed.ToString("hh\\:mm\\:ss")).TotalSeconds;
-                        CompleteRedTimeInSeconds += m.Red_StopWatch.Elapsed.TotalSeconds;
-                        CompleteBlueTime = CompleteBlueTime.Add(m.Blue_StopWatch.Elapsed);
-                        CompleteRedTime = CompleteRedTime.Add(m.Red_StopWatch.Elapsed);
+                        CompleteBlueTimeInSeconds += m.ReturnBlueTime().TotalSeconds;
+                        CompleteRedTimeInSeconds += m.ReturnRedTime().TotalSeconds;
+                        CompleteBlueTime = CompleteBlueTime.Add(m.ReturnBlueTime());
+                        CompleteRedTime = CompleteRedTime.Add(m.ReturnRedTime());
 
                         
 
