@@ -15,6 +15,7 @@ namespace Airsoft_Majaky
     {
         TcpListener server = null;
         public static volatile List<Majak> activeClients;
+        private int IDForNextNewConnection = 1;
         public List<Request> RequestsToEvaluation;
         public List<Request> RequestsToRespond;
         public MainWindow mw { get; set; }
@@ -121,7 +122,8 @@ namespace Airsoft_Majaky
                     }
                     if (!found)
                     {
-                        req.Sender.ID = activeClients.Count;
+                        req.Sender.ID = IDForNextNewConnection;
+                        IDForNextNewConnection++;
                         mw.CreateNewMajakLine(req.Sender);
                     }
                     req.Sender.MACAddress = datasplt[1];

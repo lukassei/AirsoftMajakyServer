@@ -135,35 +135,37 @@ namespace Airsoft_Majaky
             MainWindow __mw = (MainWindow)_mw;
             while (true)
             {
-                App.Current.Dispatcher.Invoke((Action)delegate // <--- HERE
-                {
-                    double CompleteBlueTimeInSeconds = 0;
-                    double CompleteRedTimeInSeconds = 0;
-                    TimeSpan CompleteBlueTime = new TimeSpan();
-                    TimeSpan CompleteRedTime = new TimeSpan();
-                    foreach (Majak m in Comunication.activeClients)
+                    App.Current.Dispatcher.Invoke((Action)delegate // <--- HERE
                     {
-                        TextBlock t_m = (TextBlock)__mw.grid1.FindName(string.Format("majak{0}_modry", m.ID));
-                        TextBlock t_r = (TextBlock)__mw.grid1.FindName(string.Format("majak{0}_cerveny", m.ID));
-
-                        if (t_m != null && t_r != null)
+                        double CompleteBlueTimeInSeconds = 0;
+                        double CompleteRedTimeInSeconds = 0;
+                        TimeSpan CompleteBlueTime = new TimeSpan();
+                        TimeSpan CompleteRedTime = new TimeSpan();
+                        foreach (Majak m in Comunication.activeClients.ToList<Majak>())
                         {
-                            t_m.Text = m.ReturnBlueTime().ToString("hh\\:mm\\:ss\\.f");
-                            t_r.Text = m.ReturnRedTime().ToString("hh\\:mm\\:ss\\.f");
+                            TextBlock t_m = (TextBlock)__mw.grid1.FindName(string.Format("majak{0}_modry", m.ID));
+                            TextBlock t_r = (TextBlock)__mw.grid1.FindName(string.Format("majak{0}_cerveny", m.ID));
+
+                            if (t_m != null && t_r != null)
+                            {
+                                t_m.Text = m.ReturnBlueTime().ToString("hh\\:mm\\:ss\\.f");
+                                t_r.Text = m.ReturnRedTime().ToString("hh\\:mm\\:ss\\.f");
+                            }
+                            CompleteBlueTimeInSeconds += m.ReturnBlueTime().TotalSeconds;
+                            CompleteRedTimeInSeconds += m.ReturnRedTime().TotalSeconds;
+                            CompleteBlueTime = CompleteBlueTime.Add(m.ReturnBlueTime());
+                            CompleteRedTime = CompleteRedTime.Add(m.ReturnRedTime());
+
+
+
                         }
-                        CompleteBlueTimeInSeconds += m.ReturnBlueTime().TotalSeconds;
-                        CompleteRedTimeInSeconds += m.ReturnRedTime().TotalSeconds;
-                        CompleteBlueTime = CompleteBlueTime.Add(m.ReturnBlueTime());
-                        CompleteRedTime = CompleteRedTime.Add(m.ReturnRedTime());
+                        __mw.CompleteBlueTime_txt.Text = string.Format("{0} ({1})", CompleteBlueTime.ToString("hh\\:mm\\:ss\\.f"), Math.Floor(CompleteBlueTimeInSeconds));
+                        __mw.CompleteRedTime_txt.Text = string.Format("{0} ({1})", CompleteRedTime.ToString("hh\\:mm\\:ss\\.f"), Math.Floor(CompleteRedTimeInSeconds));
+                        __mw.delkahry.Text = delkahry_stopky.Elapsed.ToString("hh\\:mm\\:ss\\.f");
 
-                        
-
-                    }
-                    __mw.CompleteBlueTime_txt.Text = string.Format("{0} ({1})", CompleteBlueTime.ToString("hh\\:mm\\:ss\\.f"), Math.Floor(CompleteBlueTimeInSeconds));
-                    __mw.CompleteRedTime_txt.Text = string.Format("{0} ({1})", CompleteRedTime.ToString("hh\\:mm\\:ss\\.f"), Math.Floor(CompleteRedTimeInSeconds));
-                    __mw.delkahry.Text = delkahry_stopky.Elapsed.ToString("hh\\:mm\\:ss\\.f");
+                    });
                 
-                });
+
                 Thread.Sleep(100);
             }
         }
