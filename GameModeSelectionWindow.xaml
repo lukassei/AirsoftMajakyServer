@@ -1,0 +1,23 @@
+﻿<Window x:Class="Airsoft_Majaky.GameModeSelectionWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:Airsoft_Majaky"
+        mc:Ignorable="d"
+        Title="Výběr herního módu" Height="300" Width="300">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="47*"/>
+            <RowDefinition Height="153*"/>
+            <RowDefinition Height="70*"/>
+        </Grid.RowDefinitions>
+
+        <TextBlock Text="Vyberte prosím herní mód:" VerticalAlignment="Center" HorizontalAlignment="Center" Grid.Row="0" Grid.Column="0" FontSize="15"/>
+        <ComboBox Grid.Row="1" Grid.Column="0" Margin="5,60" Name="SelectedGameModeBox" FontSize="14">
+            <ComboBoxItem IsSelected="True" FontSize="14">Domination</ComboBoxItem>
+            <ComboBoxItem FontSize="14">Selective Domination</ComboBoxItem>
+        </ComboBox>
+        <Button Grid.Row="2" Grid.Column="0" Margin="5,15" Content="Potvrdit výběr horního módu" Name="GameModeSelectionConfirm" Click="GameModeSelectionConfirm_Click"/>
+    </Grid>
+</Window>

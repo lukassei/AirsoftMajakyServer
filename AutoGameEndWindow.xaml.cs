@@ -19,26 +19,23 @@ namespace Airsoft_Majaky
     /// </summary>
     public partial class AutoGameEndWindow : Window
     {
-        private MainWindow Mw { get; set; }
-        public AutoGameEndWindow(MainWindow mw)
+        private GameLogic Game { get; set; }
+        public AutoGameEndWindow(GameLogic _game)
         {
             InitializeComponent();
-            Mw = mw;
+            Game = _game;
         }
 
         private void Confirm_Click(object sender, RoutedEventArgs e)
         {
             try
             {
-                int time;
-                int minutes = int.Parse(HoursTextBox.Text) * 60;
-                time = minutes + int.Parse(MinutesTextBox.Text);
-                Mw.TimeForAutoEndInMinutes = time;
-                this.Close();
+                Game.autoGameEndPoints = int.Parse(PointsToEndTheGameTextBox.Text);
+                Close();
             }
-            catch(Exception ex)
+            catch
             {
-                MessageBox.Show(ex.ToString(), "Chyba - nepodařilo se nastavit automatické ukončení hry.");
+                MessageBox.Show("Body musí obsahovat pouze celá čísla.", "Chyba!");
             }
         }
     }

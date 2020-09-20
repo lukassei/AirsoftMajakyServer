@@ -107,10 +107,17 @@
     </Compile>
     <Compile Include="Comunication.cs" />
     <Compile Include="GameLogic.cs" />
+    <Compile Include="GameModeSelectionWindow.xaml.cs">
+      <DependentUpon>GameModeSelectionWindow.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Majak.cs" />
     <Compile Include="Request.cs" />
     <Compile Include="UIWorker.cs" />
     <Page Include="AutoGameEndWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="GameModeSelectionWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

@@ -42,12 +42,10 @@ namespace Airsoft_Majaky
             }
         }
         public ConcurrentBag<Request> RequestToEval;
-        public MainWindow mw { get; set; }
         public bool isConOk { get; set; }
 
-        public Comunication(string ip, int port, MainWindow _mw)
+        public Comunication(string ip, int port)
         {
-            mw = _mw;
             activeClients = new List<Majak>();
             RequestsToEvaluation = new ConcurrentQueue<Request>();
             RequestsToRespond = new ConcurrentQueue<Request>();
@@ -140,6 +138,7 @@ namespace Airsoft_Majaky
                             req.Sender.Red_StopWatch = m.Red_StopWatch;
                             m.isConnected = false;
                             activeClients.Remove(m);
+                            activeClients.Add(req.Sender);
                             found = true;
                         }
                     }
@@ -345,14 +344,13 @@ namespace Airsoft_Majaky
         }
         public void StartConnectionCheck()
         {
-            Thread t = new Thread(new ParameterizedThreadStart(CheckConnectionStatus));
+            Thread t = new Thread(CheckConnectionStatus);
             t.IsBackground = true;
-            t.Start(mw);
+            t.Start();
         }
-        public void CheckConnectionStatus(Object __mw) //Upravit aby na konci aktualizoval stav na záložce Kontroly spojení
+        public void CheckConnectionStatus() //Upravit aby na konci aktualizoval stav na záložce Kontroly spojení
         {
             Stopwatch s = new Stopwatch();
-            MainWindow _mw = (MainWindow)__mw;
             while (true)
             {
                 foreach (Majak m in activeClients.ToList<Majak>())
@@ -430,7 +428,7 @@ namespace Airsoft_Majaky
                     try
                     {
                         Request result;
-                        while(RequestsToEvaluation.Count > 1)
+                        while(RequestsToEvaluation.Count > 0)
                         {
                             if (RequestsToEvaluation.TryDequeue(out result))
                             {
@@ -443,7 +441,7 @@ namespace Airsoft_Majaky
                     try
                     {
                         Request result;
-                        while(RequestsToRespond.Count > 1)
+                        while(RequestsToRespond.Count > 0)
                         {
                             if (RequestsToRespond.TryDequeue(out result))
                             {

@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Windows;
 
 namespace Airsoft_Majaky
 {
@@ -40,7 +41,7 @@ namespace Airsoft_Majaky
                 isGameRunningVar = value;
             }
         }
-        static volatile Stopwatch _gameLenght;
+        private static volatile Stopwatch _gameLenght;
         public static Stopwatch GameLenght
         {
             get
@@ -52,6 +53,12 @@ namespace Airsoft_Majaky
                 _gameLenght = value;
             }
         }
+        public int autoGameEndPoints { get; set; }
+        /// <summary>
+        /// Mód hry
+        /// 1 = Domination, 2 = selective domination, 
+        /// </summary>
+        private int GameMode { get; set; }
         private static volatile int _blueScore;
         public static int BlueScore
         {
@@ -80,15 +87,33 @@ namespace Airsoft_Majaky
         {
             GameLenght = new Stopwatch();
         }
+        public void ChangeGameMode(int _mode)
+        {
+            GameMode = _mode;
+            switch (GameMode)
+            {
+                case 1:
+                    StartGameModeDomination();
+                    break;
+                case 2:
+                    //StartGameModeSelectiveDomination
+                    break;
+            }
+        }
         /// <summary>
         /// Spustí vše potřebné pro hraní módu Domintaion
         /// </summary>
         public void StartGameModeDomination()
         {
+            UIWorker.PrepareGridForDomination();
             StartStationTimeKeeper();
         }
         public void StartGame()
         {
+            if (Comunication.activeClients.Count == 0 || Comunication.activeClients == null)
+                throw new Exception("Nemůžete spustit hru, když není připojen alespoň jeden maják!");
+            if (isGameRunning != 0)
+                throw new Exception("Pro začátek nové hry musíte nejdřív ukončit hru probíhající!");
             isGameRunning = 1;
             foreach(Majak m in Comunication.activeClients.ToList<Majak>())
             {
@@ -98,6 +123,8 @@ namespace Airsoft_Majaky
         }
         public void PauseGame()
         {
+            if (isGameRunning != 1)
+                throw new Exception("Hra je již pozastavena, a nebo žádná hra právě neprobíhá!");
             isGameRunning = 2;
             foreach (Majak m in Comunication.activeClients.ToList<Majak>())
             {
@@ -107,6 +134,8 @@ namespace Airsoft_Majaky
         }
         public void UnpauseGame()
         {
+            if (isGameRunning != 2)
+                throw new Exception("Hra již běží, a nebo žádná hra neprobíhá!");
             isGameRunning = 1;
             foreach (Majak m in Comunication.activeClients.ToList<Majak>())
             {
@@ -116,11 +145,15 @@ namespace Airsoft_Majaky
         }
         public void EndGame()
         {
+            if (isGameRunning == 0)
+                throw new Exception("Žádná hra právě neprobíhá!");
             isGameRunning = 0;
             foreach (Majak m in Comunication.activeClients.ToList<Majak>())
             {
                 m.StopwatchStop();
             }
+            BlueScore = 0;
+            RedScore = 0;
             GameLenght.Stop();
         }
         /// <summary>
@@ -139,21 +172,53 @@ namespace Airsoft_Majaky
         {
             while (true)
             {
-                TimeSpan CompleteBlueTime = new TimeSpan();
-                TimeSpan CompleteRedTime = new TimeSpan();
-                try
+                if(Comunication.activeClients != null)
                 {
-                    foreach (Majak m in Comunication.activeClients.ToList<Majak>())
+                    TimeSpan CompleteBlueTime = new TimeSpan();
+                    TimeSpan CompleteRedTime = new TimeSpan();
+                    try
                     {
-                        CompleteBlueTime = CompleteBlueTime.Add(m.ReturnBlueTime());
-                        CompleteRedTime = CompleteRedTime.Add(m.ReturnRedTime());
-                        UIWorker.UpdateTimesOfStation(m);
+                        foreach (Majak m in Comunication.activeClients.ToList<Majak>())
+                        {
+                            CompleteBlueTime = CompleteBlueTime.Add(m.ReturnBlueTime());
+                            CompleteRedTime = CompleteRedTime.Add(m.ReturnRedTime());
+                            UIWorker.UpdateTimesOfStation(m);
+                        }
+                        BlueScore = int.Parse(Math.Floor(CompleteBlueTime.TotalSeconds).ToString());
+                        RedScore = int.Parse(Math.Floor(CompleteRedTime.TotalSeconds).ToString());
+                        if(autoGameEndPoints > 0)
+                            CheckWetherGameEndPointsReached();
                     }
-                    BlueScore = int.Parse(Math.Floor(CompleteBlueTime.TotalSeconds).ToString());
-                    RedScore = int.Parse(Math.Floor(CompleteRedTime.TotalSeconds).ToString());
+                    catch { }
                 }
-                catch { }
+                else
+                {
+
+                }
                 Thread.Sleep(100);
+            }
+        }
+        /// <summary>
+        /// Funkce zkontroluje zda je již splněna podmínka pro automatické ukončení hry.
+        /// </summary>
+        private void CheckWetherGameEndPointsReached()
+        {
+            if(BlueScore >= autoGameEndPoints && RedScore >= autoGameEndPoints)
+            {
+                MessageBox.Show("Hra by skončila remízou! Prodlužuju hru o 200 bodů.");
+                autoGameEndPoints += 200;
+            }
+            if(BlueScore >= autoGameEndPoints)
+            {
+                EndGame();
+                autoGameEndPoints = 0;
+                MessageBox.Show("Modrý tým dosáhl výherního množství bodů. Modrý tým vyhrál. Hra automaticky ukončena.", "Modrý tým vyhrál.");
+            }
+            if(RedScore >= autoGameEndPoints)
+            {
+                EndGame();
+                autoGameEndPoints = 0;
+                MessageBox.Show("Červený tým dosáhl výherního množství bodů. Červený tým vyhrál. Hra automaticky ukončena.", "Červený tým vyhrál.");
             }
         }
         /// <summary>
@@ -169,6 +234,6 @@ namespace Airsoft_Majaky
             else
                 return false;
         }
-
+        
     }
 }

@@ -10,42 +10,7 @@
         <TabControl>
             <TabItem Header="Přehled časů">
                 <Grid Margin="3" Name="grid1">
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="60"/>
-                        <RowDefinition Height="40"/>
-                    </Grid.RowDefinitions>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="0.5*"/>
-                        <ColumnDefinition Width="*"/>
-                        <ColumnDefinition Width="*"/>
-                    </Grid.ColumnDefinitions>
-
-                    <Border Grid.Row="0" Grid.Column="0" BorderThickness="2, 2, 1, 1" BorderBrush="Black">
-                        <Grid>
-                            <TextBlock Text="Délka hry:" HorizontalAlignment="Center" VerticalAlignment="Top" FontSize="15"/>
-                            <TextBlock Name="delkahry" Text="00:00" HorizontalAlignment="Center" VerticalAlignment="Bottom" FontSize="16"/>
-                        </Grid>
-                    </Border>
-                    <Border Grid.Row="0" Grid.Column="1" BorderThickness="1, 2, 1, 1" BorderBrush="Black" Background="#FFBCEBF5">
-                        <TextBlock Text="Modrý tým" VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="23" />
-                    </Border>
-                    <Border Grid.Row="0" Grid.Column="2" BorderThickness="1, 2, 2, 1" BorderBrush="Black" Background="#FFF08883">
-                        <TextBlock Text="Červený tým" VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="23"/>
-                    </Border>
-
-                    <Border Grid.Column="0" Grid.Row="1" BorderThickness="2,1,1,1" BorderBrush="Black" Background="#FFB8FCA2">
-                        <TextBlock Text="Celkem" VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="18" />
-                    </Border>
-                    <Border Grid.Column="1" Grid.Row="1" BorderThickness="1,1,1,1" BorderBrush="Black" Background="#FFB8FCA2">
-                        <TextBlock Name="CompleteBlueTime_txt" Text="XXX" VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="18" />
-                    </Border>
-                    <Border Grid.Column="2" Grid.Row="1" BorderThickness="1,1,2,1" BorderBrush="Black" Background="#FFB8FCA2">
-                        <TextBlock Name="CompleteRedTime_txt" Text="XXX" VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="18" />
-                    </Border>
-
-
-
-
+                    
                 </Grid>
             </TabItem>
             <TabItem Header="Kontrola spojení">

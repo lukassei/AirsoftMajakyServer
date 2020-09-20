@@ -13,11 +13,9 @@
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
 
-        <TextBlock Grid.Row="0" Grid.Column="0" Text="Délka hry: (po uplynutí doby bude hra zastavena)" FontSize="13" VerticalAlignment="Center" Margin="5,38,0,78"/>
-        <TextBox Name="HoursTextBox" Margin="5,60,188,53" />
-        <TextBlock Grid.Column="0" Text="Hodiny" Margin="109,61,135,53" />
-        <TextBlock Grid.Column="0" Text="Minuty" Margin="109,86,135,28"/>
-        <TextBox Name="MinutesTextBox" Margin="5,86,188,27" />
+        <TextBlock Grid.Row="0" Grid.Column="0" Text="Nastavte počet bodů pro ukončení hry:" FontSize="13" VerticalAlignment="Center" Margin="5,38,0,78" HorizontalAlignment="Center"/>
+        <TextBox Name="PointsToEndTheGameTextBox" Margin="5,60,188,53" />
+        <TextBlock Grid.Column="0" Text="počet bodů" Margin="109,61,113.6,53.2" />
 
         <Button Grid.Row="1" Grid.Column="0" VerticalAlignment="Bottom" Content="Potvrdit" Margin="20" Name="Confirm" Click="Confirm_Click"/>
     </Grid>

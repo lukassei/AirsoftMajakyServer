@@ -24,31 +24,24 @@ namespace Airsoft_Majaky
     /// </summary>
     public partial class MainWindow : Window
     {
-        private static volatile int isGameRunningVar;
-        public static int isGameRunning
-        {
-            get
-            {
-                return isGameRunningVar;
-            }
-            set
-            {
-                isGameRunningVar = value;
-            }
-        }
         public int TimeForAutoEndInMinutes { get; set; }
         private GameLogic Game { get; set; }
         public MainWindow()
         {
             InitializeComponent();
-            StartServer();
-            isGameRunning = 0;
+            this.Visibility = Visibility.Hidden;
             UIWorker.MW = this;
             Game = new GameLogic();
-            Game.StartGameModeDomination();
+            OpenGameSelectionWindow();
+            
 
         }
-        private void StartServer()
+        private void OpenGameSelectionWindow()
+        {
+            GameModeSelectionWindow Gw = new GameModeSelectionWindow(this, Game);
+            Gw.Show();
+        }
+        public void StartServer()
         {
             Thread t = new Thread(delegate ()
             {
@@ -62,7 +55,7 @@ namespace Airsoft_Majaky
                     }
                 }
                 // replace the IP with your system IP Address...
-                Comunication CC = new Comunication(ipaddres, 11800, this);
+                Comunication CC = new Comunication(ipaddres, 11800);
             });
             t.IsBackground = true;
             t.Start();
@@ -70,34 +63,55 @@ namespace Airsoft_Majaky
 
         private void ZacitHru_Click(object sender, RoutedEventArgs e)
         {
-            Game.StartGame();
+            try
+            {
+                Game.StartGame();
+                MessageBox.Show("Hra byla úspěšně spuštěna.", "Spuštění hry.");
+            }
+            catch(Exception ex)
+            {
+                MessageBox.Show(ex.Message, "Chyba!");
+            }
         }
 
         private void PozastavitHru_Click(object sender, RoutedEventArgs e)
         {
-            Game.PauseGame();
+            try
+            {
+                Game.PauseGame();
+                MessageBox.Show("Hra byla úspěšně pozastaveno.", "Pozastavení hry.");
+            }
+            catch(Exception ex)
+            {
+                MessageBox.Show(ex.Message, "Chyba!");
+            }
 
         }
         private void ObnovitHru_Click(object sender, RoutedEventArgs e)
         {
-            Game.UnpauseGame();
+            try
+            {
+                Game.UnpauseGame();
+                MessageBox.Show("Hra byla úspěšně obnovena.", "Obnovení hry.");
+            }
+            catch(Exception ex)
+            {
+                MessageBox.Show(ex.Message, "Chyba!");
+            }
         }
 
         private void UkoncitHru_Click(object sender, RoutedEventArgs e)
         {
-            Game.EndGame();
+            try
+            {
+                Game.EndGame();
+                MessageBox.Show("Hra byla uspěšně ukončena. Finální výsledky najdete v záložce Přehled Časů.", "Ukončení hry.");
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message, "Chyba!");
+            }
         }
-        private void UkoncitHru_Automaticky()
-        {
-            
-        }
-
-        private void AutoGameEnd()
-        {
-            
-        }
-
-
 
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
@@ -114,13 +128,8 @@ namespace Airsoft_Majaky
 
         private void AutomatickeUkonceniHry_Click(object sender, RoutedEventArgs e)
         {
-            if (isGameRunning != 0)
-                MessageBox.Show("Automatické ukončení nelze nastavit na již běžící hře. \nPro nastavení automatického ukončení musí být hra ukončena. ", "Nelze nastavit automatické ukončení!");
-            else
-            {
-                AutoGameEndWindow a = new AutoGameEndWindow(this);
-                a.Show();
-            }
+            AutoGameEndWindow w = new AutoGameEndWindow(Game);
+            w.Show();
         }
     }
 }
