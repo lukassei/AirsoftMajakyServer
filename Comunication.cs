@@ -8,6 +8,7 @@ using System.Net.Sockets;
 using System.Windows;
 using System.Diagnostics;
 using System.Windows.Controls;
+using System.Collections.Concurrent;
 
 namespace Airsoft_Majaky
 {
@@ -16,8 +17,31 @@ namespace Airsoft_Majaky
         TcpListener server = null;
         public static volatile List<Majak> activeClients;
         private int IDForNextNewConnection = 1;
-        public List<Request> RequestsToEvaluation;
-        public List<Request> RequestsToRespond;
+        private static volatile ConcurrentQueue<Request> _requestsToEvaluation;
+        private static ConcurrentQueue<Request> RequestsToEvaluation
+        {
+            get
+            {
+                return _requestsToEvaluation;
+            }
+            set
+            {
+                _requestsToEvaluation = value;
+            }
+        }
+        private static volatile ConcurrentQueue<Request> _requestsToRespond;
+        private static ConcurrentQueue<Request> RequestsToRespond
+        {
+            get
+            {
+                return _requestsToRespond;
+            }
+            set
+            {
+                _requestsToRespond = value;
+            }
+        }
+        public ConcurrentBag<Request> RequestToEval;
         public MainWindow mw { get; set; }
         public bool isConOk { get; set; }
 
@@ -25,13 +49,12 @@ namespace Airsoft_Majaky
         {
             mw = _mw;
             activeClients = new List<Majak>();
-            RequestsToEvaluation = new List<Request>();
-            RequestsToRespond = new List<Request>();
+            RequestsToEvaluation = new ConcurrentQueue<Request>();
+            RequestsToRespond = new ConcurrentQueue<Request>();
             IPAddress localAddr = IPAddress.Parse(ip);
             server = new TcpListener(localAddr, port);
             server.Start();
             StartConnectionCheck();
-            StartGameStatusChecker();
             StartRequestCleaner();
             StartListener();
         }
@@ -48,7 +71,7 @@ namespace Airsoft_Majaky
 
                         Thread t = new Thread(new ParameterizedThreadStart(HandleDevice));
                         t.Start(m);
-                        activeClients.Add(m);
+                        //activeClients.Add(m);
                     }
                 }
             }
@@ -83,7 +106,7 @@ namespace Airsoft_Majaky
                             if(s != null)
                             {
                                 Request r = new Request(s, majak);
-                                RequestsToEvaluation.Add(r);
+                                RequestsToEvaluation.Enqueue(r);
                             }
                         }
                     }
@@ -124,37 +147,38 @@ namespace Airsoft_Majaky
                     {
                         req.Sender.ID = IDForNextNewConnection;
                         IDForNextNewConnection++;
-                        mw.CreateNewMajakLine(req.Sender);
+                        activeClients.Add(req.Sender);
+                        UIWorker.CreateNewStationLine(req.Sender);
                     }
                     req.Sender.MACAddress = datasplt[1];
                     r = new Request(1, req.Sender);
-                    RequestsToRespond.Add(r);
+                    RequestsToRespond.Enqueue(r);
                     break;
                 case "PONG":
                     isConOk = true;
                     break;
                 case "PING":
                     r = new Request(3, req.Sender);
-                    RequestsToRespond.Add(r);
+                    RequestsToRespond.Enqueue(r);
                     break;
                 case "CHGTM":
                     //zavolat změnu týmu
-                    if (StopwatchSystem.ChangeTeam(int.Parse(datasplt[1]), datasplt[2]))
+                    if (GameLogic.ChangeStationsTeam(req.Sender, datasplt[2]))
                     {
                         r = new Request(2, req.Sender); //pokud je hra zapnutá dojde ke změnění majáku a odešle se potvrzení arduinu 
-                        RequestsToRespond.Add(r);
+                        RequestsToRespond.Enqueue(r);
                     }
                     else
                     {
-                        if (MainWindow.isGameRunning == 2)
+                        if (GameLogic.isGameRunning == 2)
                         {
                             r = new Request(4, req.Sender); //Pokud je hra pozastavená nedojde ke změně majáku a odešle se zpráva arduinu, že hra neběží
-                            RequestsToRespond.Add(r);
+                            RequestsToRespond.Enqueue(r);
                         }
-                        else if (MainWindow.isGameRunning == 0)
+                        else if (GameLogic.isGameRunning == 0)
                         {
                             r = new Request(7, req.Sender); //Pokud je hra vypnutá nedojde ke změně majáku a odešle se zpráva arduinu, že hra neběží
-                            RequestsToRespond.Add(r);
+                            RequestsToRespond.Enqueue(r);
                         }
                     }
                     break;
@@ -179,7 +203,7 @@ namespace Airsoft_Majaky
                             }
                         }
                     r = new Request(9, req.Sender);
-                    RequestsToRespond.Add(r);
+                    RequestsToRespond.Enqueue(r);
                     break;
             }
         }
@@ -342,7 +366,7 @@ namespace Airsoft_Majaky
                         try
                         {
                             Request r = new Request(8, m);
-                            RequestsToRespond.Add(r);
+                            RequestsToRespond.Enqueue(r);
                             s.Restart();
                             while (s.Elapsed < TimeSpan.FromSeconds(5) && !isConOk)
                             {
@@ -352,39 +376,8 @@ namespace Airsoft_Majaky
                             {
                                 m.isConnected = false;
                                 m.Client.Close();
-                                if(m.ID == 0)
-                                {
-                                    activeClients.Remove(m);
-                                }
-                                App.Current.Dispatcher.Invoke((Action)delegate // <--- HERE
-                                {
-                                    TextBlock t_s = (TextBlock)_mw.grid2.FindName(String.Format("majak{0}_spojeni", m.ID));
-                                    if(t_s != null)
-                                    {
-                                        t_s.Text = string.Format("Maják není připojen.");
-                                        t_s.Foreground = System.Windows.Media.Brushes.Red;
-                                    }
-                                });
                             }
-                            else //Pokud je připojení v pořádku a client odpověděl, tak aktualizuj stav na záložce kontrola spojení v MainWindow
-                            {
-                                string barva = null;
-                                if (m.Color == "R")
-                                    barva = "Červená";
-                                else if (m.Color == "B")
-                                    barva = "Modrá";
-                                else
-                                    barva = "Neutrální";
-                                App.Current.Dispatcher.Invoke((Action)delegate // <--- HERE
-                                {
-                                    TextBlock t_s = (TextBlock)_mw.grid2.FindName(String.Format("majak{0}_spojeni", m.ID));
-                                    if(t_s != null)
-                                    {
-                                        t_s.Text = string.Format("Maják připojen. - Barva majáku: {0}", barva);
-                                        t_s.Foreground = System.Windows.Media.Brushes.Green;
-                                    }
-                                });                               
-                            }
+                            UIWorker.UpdateStationConnectionStatus(m);
                         }
                         catch (Exception e)
                         {
@@ -398,42 +391,27 @@ namespace Airsoft_Majaky
                 Thread.Sleep(3000);
             }
         }
-
-        public void StartGameStatusChecker()
+        /// <summary>
+        /// Když se hra spustí/pozastaví/ukončí/obnoví vytvoří nový požadavek na odeslání informací k majákům
+        /// </summary>
+        /// <param name="transition">0 = Ukončení hry, 1 = Obnovení pozastavené hry, 2 = pozastavení hry</param>
+        public static void NotifyGameStatusChanged(int transition)
         {
-            Thread t = new Thread(new ParameterizedThreadStart(GameStatusChecker));
-            t.IsBackground = true;
-            t.Start(mw);
-        }
-        public void GameStatusChecker(Object __mw)
-        {
-            MainWindow _mw = (MainWindow)__mw;
             Request r = null;
-            int previousState = 0;
-
-            while (true)
+            switch (transition)
             {
-                if (MainWindow.isGameRunning != previousState)
-                {
-                    if (MainWindow.isGameRunning == 1 && previousState == 2)
-                    {
-                        r = new Request(6);
-                        RequestsToRespond.Add(r);
-                    }
-                    else if(MainWindow.isGameRunning == 2 && previousState == 1)
-                    {
-                        r = new Request(5);
-                        RequestsToRespond.Add(r);
-                    }
-                    else if (MainWindow.isGameRunning == 0 && previousState == 1 || MainWindow.isGameRunning == 0 && previousState == 2)
-                    {
-                        r = new Request(7);
-                        RequestsToRespond.Add(r);
-                    }
-
-                    previousState = MainWindow.isGameRunning;
-                }
-                Thread.Sleep(200);
+                case 0:
+                    r = new Request(7);
+                    RequestsToRespond.Enqueue(r);
+                    break;
+                case 1:
+                    r = new Request(6);
+                    RequestsToRespond.Enqueue(r);
+                    break;
+                case 2:
+                    r = new Request(5);
+                    RequestsToRespond.Enqueue(r);
+                    break;
             }
         }
 
@@ -449,16 +427,32 @@ namespace Airsoft_Majaky
             {
                 if(RequestsToEvaluation.Count > 0 || RequestsToRespond.Count > 0)
                 {
-                    foreach(Request r in RequestsToEvaluation.ToList<Request>())
+                    try
                     {
-                        DataEvaluation(r);
-                        RequestsToEvaluation.Remove(r);
+                        Request result;
+                        while(RequestsToEvaluation.Count > 1)
+                        {
+                            if (RequestsToEvaluation.TryDequeue(out result))
+                            {
+                                if (result != null)
+                                    DataEvaluation(result);
+                            }
+                        }
                     }
-                    foreach(Request r in RequestsToRespond.ToList<Request>())
+                    catch { }
+                    try
                     {
-                        SendResponse(r);
-                        RequestsToRespond.Remove(r);
+                        Request result;
+                        while(RequestsToRespond.Count > 1)
+                        {
+                            if (RequestsToRespond.TryDequeue(out result))
+                            {
+                                if (result != null)
+                                    SendResponse(result);
+                            }
+                        }
                     }
+                    catch { }
                 }
                 Thread.Sleep(50);
             }

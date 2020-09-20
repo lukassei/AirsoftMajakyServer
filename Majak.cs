@@ -18,12 +18,12 @@ namespace Airsoft_Majaky
         {
             get
             {
-                if(MainWindow.isGameRunning == 0)
+                if(GameLogic.isGameRunning == 0)
                 {
                     color = "N";
                     return "N";
                 }
-                else if(MainWindow.isGameRunning == 2)
+                else if(GameLogic.isGameRunning == 2)
                 {
                     return "A";
                 }
@@ -122,6 +122,10 @@ namespace Airsoft_Majaky
             Blue_StopWatch.Reset();
             BlueTimeInSeconds = 0;
             RedTimeInSeconds = 0;
+        }
+        public override string ToString()
+        {
+            return ID.ToString();
         }
     }
 }

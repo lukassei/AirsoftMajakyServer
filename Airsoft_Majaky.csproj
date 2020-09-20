@@ -106,9 +106,10 @@
       <DependentUpon>AutoGameEndWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="Comunication.cs" />
+    <Compile Include="GameLogic.cs" />
     <Compile Include="Majak.cs" />
     <Compile Include="Request.cs" />
-    <Compile Include="StopwatchSystem.cs" />
+    <Compile Include="UIWorker.cs" />
     <Page Include="AutoGameEndWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
