@@ -228,9 +228,14 @@ namespace Airsoft_Majaky
         /// <param name="newTeam">Nový tým pro daný maják</param>
         public static bool ChangeStationsTeam(Majak m, string newTeam)
         {
-            m.Color = newTeam;
-            if (m.Color == newTeam)
-                return true;
+            if(isGameRunning == 1)
+            {
+                m.Color = newTeam;
+                if (m.Color == newTeam)
+                    return true;
+                else
+                    return false;
+            }
             else
                 return false;
         }

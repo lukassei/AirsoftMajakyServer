@@ -132,7 +132,7 @@ namespace Airsoft_Majaky
                     {
                         if (m.MACAddress == datasplt[1])
                         {
-                            req.Sender.Color = m.Color;
+                            req.Sender.Color = m.color;
                             req.Sender.ID = m.ID;
                             req.Sender.Blue_StopWatch = m.Blue_StopWatch;
                             req.Sender.Red_StopWatch = m.Red_StopWatch;

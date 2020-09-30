@@ -13,7 +13,7 @@ namespace Airsoft_Majaky
         public TcpClient Client { get; set; }
         public int ID { get; set; }
         public bool isConnected { get; set; }
-        private string color;
+        public string color { get; private set; }
         public string Color//N = neutral (nothing is lit up) B = Blue R = Read, A = all (both colors are light up)
         {
             get
