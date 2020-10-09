@@ -55,7 +55,7 @@ namespace Airsoft_Majaky
                 else if(color == "N")
                 {
                     Red_StopWatch.Stop();
-                    Red_StopWatch.Stop();
+                    Blue_StopWatch.Stop();
                 }
             }
         }
