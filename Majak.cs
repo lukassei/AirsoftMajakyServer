@@ -14,6 +14,7 @@ namespace Airsoft_Majaky
         public int ID { get; set; }
         public bool isConnected { get; set; }
         public string color { get; private set; }
+        public string Nickname { get; set; }
         public string Color//N = neutral (nothing is lit up) B = Blue R = Read, A = all (both colors are light up)
         {
             get
@@ -78,6 +79,7 @@ namespace Airsoft_Majaky
             RedTimeInSeconds = 0;
             Red_TimeSpan = new TimeSpan();
             Blue_TimeSpan = new TimeSpan();
+            Nickname = string.Format("Maják {0}", ID);
         }
         public TimeSpan ReturnRedTime()
         {

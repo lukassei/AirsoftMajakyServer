@@ -16,6 +16,7 @@ namespace Airsoft_Majaky
     {
         TcpListener server = null;
         public static volatile List<Majak> activeClients;
+        public static volatile List<RemoteControl> activeRemotes;
         private int IDForNextNewConnection = 1;
         private static volatile ConcurrentQueue<Request> _requestsToEvaluation;
         private static ConcurrentQueue<Request> RequestsToEvaluation
@@ -47,6 +48,7 @@ namespace Airsoft_Majaky
         public Comunication(string ip, int port)
         {
             activeClients = new List<Majak>();
+            activeRemotes = new List<RemoteControl>();
             RequestsToEvaluation = new ConcurrentQueue<Request>();
             RequestsToRespond = new ConcurrentQueue<Request>();
             IPAddress localAddr = IPAddress.Parse(ip);
@@ -336,6 +338,76 @@ namespace Airsoft_Majaky
                         {
                             m.Client.GetStream().Write(response_byte, 0, response_byte.Length);
                             m.Client.GetStream().Flush();
+                        }
+                        catch { }
+                        break;
+                    case 10:
+                        response = String.Empty;
+                        response = "REMOTE:CNN:CFM!";
+                        response_byte = null;
+                        response_byte = System.Text.Encoding.ASCII.GetBytes(response);
+                        try
+                        {
+                            r.Remote.Client.GetStream().Write(response_byte, 0, response_byte.Length);
+                            r.Remote.Client.GetStream().Flush();
+                        }
+                        catch { }
+                        break;
+                    case 11:
+                        try
+                        {
+                            int x = 1;
+                            while(x != activeClients.Count)
+                            { 
+                                foreach(Majak maj in activeClients.ToList<Majak>())
+                                {
+                                    if(maj.ID == x)
+                                    {
+                                        response = String.Empty;
+                                        response = string.Format("REMOTE:STATION_CREATE:{0}:{1}", maj.ID, maj.Nickname);
+                                        response_byte = null;
+                                        response_byte = System.Text.Encoding.ASCII.GetBytes(response);
+                                        r.Remote.Client.GetStream().Write(response_byte, 0, response_byte.Length);
+                                        r.Remote.Client.GetStream().Flush();
+                                    }
+                                }
+                            }
+                        }
+                        catch { }
+                        break;
+                    case 12: //REMOTE:TIME:ID majaku:R:cas v ms:B:cas v ms!
+                        try
+                        {
+                            foreach (RemoteControl rem in activeRemotes.ToList<RemoteControl>())
+                            {
+                                foreach (Majak maj in activeClients.ToList<Majak>())
+                                {
+                                    response = String.Empty;
+                                    response = string.Format("REMOTE:TIME:{0}:R:{1}:B:{2}", maj.ID, maj.ReturnRedTime().TotalSeconds.ToString(), maj.ReturnBlueTime().TotalSeconds.ToString());
+                                    response_byte = null;
+                                    response_byte = System.Text.Encoding.ASCII.GetBytes(response);
+                                    rem.Client.GetStream().Write(response_byte, 0, response_byte.Length);
+                                    rem.Client.GetStream().Flush();
+                                }
+                            }
+                        }
+                        catch { }
+                        break;
+                    case 13: //REMOTE:CONNECTION_STAT:ID:true/false!
+                        try
+                        {
+                            foreach (RemoteControl rem in activeRemotes.ToList<RemoteControl>())
+                            {
+                                foreach (Majak maj in activeClients.ToList<Majak>())
+                                {
+                                    response = String.Empty;
+                                    response = string.Format("REMOTE:CONNECTION_STAT:{0}:{1}!", maj.ID, maj.isConnected.ToString());
+                                    response_byte = null;
+                                    response_byte = System.Text.Encoding.ASCII.GetBytes(response);
+                                    rem.Client.GetStream().Write(response_byte, 0, response_byte.Length);
+                                    rem.Client.GetStream().Flush();
+                                }
+                            }
                         }
                         catch { }
                         break;

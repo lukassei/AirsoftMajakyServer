@@ -11,6 +11,7 @@ namespace Airsoft_Majaky
         public int TypeOfResponse { get; set; }
         public string Data { get; set; }
         public Majak Sender { get; set; }
+        public RemoteControl Remote { get; set; }
 
         public Request(int r, Majak m)
         {
@@ -21,11 +22,22 @@ namespace Airsoft_Majaky
         {
             TypeOfResponse = r;
             Sender = null;
+
         }
         public Request(string d, Majak m)
         {
             Data = d;
             Sender = m;
+        }
+        public Request(string d, RemoteControl remote)
+        {
+            Data = d;
+            Remote = remote;
+        }
+        public Request(int r, RemoteControl remote)
+        {
+            TypeOfResponse = r;
+            Remote = remote;
         }
     }
 }

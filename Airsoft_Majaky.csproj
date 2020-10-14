@@ -111,6 +111,7 @@
       <DependentUpon>GameModeSelectionWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="Majak.cs" />
+    <Compile Include="RemoteControl.cs" />
     <Compile Include="Request.cs" />
     <Compile Include="UIWorker.cs" />
     <Page Include="AutoGameEndWindow.xaml">
