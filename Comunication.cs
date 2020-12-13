@@ -141,6 +141,7 @@ namespace Airsoft_Majaky
                             activeClients.Add(req.Sender);
                             found = true;
                         }
+
                     }
                     if (!found)
                     {
