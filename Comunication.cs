@@ -9,12 +9,14 @@ using System.Windows;
 using System.Diagnostics;
 using System.Windows.Controls;
 using System.Collections.Concurrent;
+using System.IO.Ports;
 
 namespace Airsoft_Majaky
 {
     public class Comunication
     {
         TcpListener server = null;
+        SerialPort COM = null;
         public static volatile List<Majak> activeClients;
         private int IDForNextNewConnection = 1;
         private static volatile ConcurrentQueue<Request> _requestsToEvaluation;
@@ -49,12 +51,80 @@ namespace Airsoft_Majaky
             activeClients = new List<Majak>();
             RequestsToEvaluation = new ConcurrentQueue<Request>();
             RequestsToRespond = new ConcurrentQueue<Request>();
-            IPAddress localAddr = IPAddress.Parse(ip);
-            server = new TcpListener(localAddr, port);
-            server.Start();
-            StartConnectionCheck();
+            
+            StartListeningOnCOMPort();
+            //IPAddress localAddr = IPAddress.Parse(ip);   -- Will be used later for Android clients (not needed now for test purposes)
+            //server = new TcpListener(localAddr, port);
+            //server.Start();
+            //StartConnectionCheck();
             StartRequestCleaner();
-            StartListener();
+            //StartListener();
+        }
+        public void StartListeningOnCOMPort()
+        {
+            bool isFine = false;
+            while(!isFine)
+            {
+                try
+                {
+                    COM = new SerialPort();
+                    COM.DtrEnable = true;  // <<< For Leonardo
+                    COM.RtsEnable = true;  // <<< For Leonardo
+                    COM.DataBits = 8;
+                    COM.StopBits = StopBits.One;
+                    COM.BaudRate = 9600;
+                    COM.PortName = "COM8";
+                    COM.Open();
+                    Thread t = new Thread(HandleCOMPortInc);
+                    t.Start();
+                    isFine = true;
+                }
+                catch { }
+            }
+        }
+        private void HandleCOMPortInc()
+        {
+            int i;
+            string data = "";
+            Byte[] bytes = new Byte[256];
+            Majak majak = null;
+            while (true)
+            {
+                try
+                {
+                    data = COM.ReadLine();
+                }
+                catch
+                {
+                    COM.Close();
+                    StartListeningOnCOMPort();
+                    break;
+                }
+                string[] data_array = data.Split('!');
+                foreach (string s in data_array)
+                {
+                    if (s != null && s.Contains('?'))
+                    {
+                        string[] d = s.Split('?');
+                        if (d[0] == "CNN")
+                        {
+                            majak = new Majak();
+                        }
+                        else
+                        {
+                            foreach (Majak m in activeClients.ToList<Majak>())
+                            {
+                                if (m.ID == int.Parse(d[1]))
+                                {
+                                    majak = m;
+                                }
+                            }
+                        }
+                        Request r = new Request(s, majak);
+                        RequestsToEvaluation.Enqueue(r);
+                    }
+                }
+            }
         }
         public void StartListener()
         {
@@ -227,8 +297,9 @@ namespace Airsoft_Majaky
                         response_byte = System.Text.Encoding.ASCII.GetBytes(response);
                         try
                         {
-                            m.Client.GetStream().Write(response_byte, 0, response_byte.Length);
-                            m.Client.GetStream().Flush();
+                            //m.Client.GetStream().Write(response_byte, 0, response_byte.Length);
+                            //m.Client.GetStream().Flush();
+                            COM.WriteLine(response);
                         }
                         catch { }
                         break;
@@ -240,8 +311,9 @@ namespace Airsoft_Majaky
                         response_byte = System.Text.Encoding.ASCII.GetBytes(response);
                         try
                         {
-                            m.Client.GetStream().Write(response_byte, 0, response_byte.Length);
-                            m.Client.GetStream().Flush();
+                            //m.Client.GetStream().Write(response_byte, 0, response_byte.Length);
+                            //m.Client.GetStream().Flush();
+                            COM.WriteLine(response);
                         }
                         catch { }
                         break;
@@ -252,8 +324,9 @@ namespace Airsoft_Majaky
                         response_byte = System.Text.Encoding.ASCII.GetBytes(response);
                         try
                         {
-                            m.Client.GetStream().Write(response_byte, 0, response_byte.Length);
-                            m.Client.GetStream().Flush();
+                            //m.Client.GetStream().Write(response_byte, 0, response_byte.Length);
+                            //m.Client.GetStream().Flush();
+                            COM.WriteLine(response);
                         }
                         catch { }
                         break;
@@ -264,8 +337,9 @@ namespace Airsoft_Majaky
                         response_byte = System.Text.Encoding.ASCII.GetBytes(response);
                         try
                         {
-                            m.Client.GetStream().Write(response_byte, 0, response_byte.Length);
-                            m.Client.GetStream().Flush();
+                            //m.Client.GetStream().Write(response_byte, 0, response_byte.Length);
+                            //m.Client.GetStream().Flush();
+                            COM.WriteLine(response);
                         }
                         catch { }
                         break;
@@ -278,8 +352,9 @@ namespace Airsoft_Majaky
                         {
                             try
                             {
-                                majak.Client.GetStream().Write(response_byte, 0, response_byte.Length);
-                                majak.Client.GetStream().Flush();
+                                //majak.Client.GetStream().Write(response_byte, 0, response_byte.Length);
+                                //majak.Client.GetStream().Flush();
+                                COM.WriteLine(response);
                             }
                             catch { }
                         }
@@ -295,8 +370,9 @@ namespace Airsoft_Majaky
                             response_byte = System.Text.Encoding.ASCII.GetBytes(response);
                             try
                             {
-                                majak.Client.GetStream().Write(response_byte, 0, response_byte.Length);
-                                majak.Client.GetStream().Flush();
+                                //majak.Client.GetStream().Write(response_byte, 0, response_byte.Length);
+                                //majak.Client.GetStream().Flush();
+                                COM.WriteLine(response);
                             }
                             catch { }
                         }
@@ -310,8 +386,9 @@ namespace Airsoft_Majaky
                         {
                             try
                             {
-                                majak.Client.GetStream().Write(response_byte, 0, response_byte.Length);
-                                majak.Client.GetStream().Flush();
+                                //majak.Client.GetStream().Write(response_byte, 0, response_byte.Length);
+                                //majak.Client.GetStream().Flush();
+                                COM.WriteLine(response);
                             }
                             catch { }
                         }
@@ -323,8 +400,9 @@ namespace Airsoft_Majaky
                         response_byte = System.Text.Encoding.ASCII.GetBytes(response);
                         try
                         {
-                            m.Client.GetStream().Write(response_byte, 0, response_byte.Length);
-                            m.Client.GetStream().Flush();
+                            //m.Client.GetStream().Write(response_byte, 0, response_byte.Length);
+                            //m.Client.GetStream().Flush();
+                            COM.WriteLine(response);
                         }
                         catch { }
                         break;
@@ -335,8 +413,9 @@ namespace Airsoft_Majaky
                         response_byte = System.Text.Encoding.ASCII.GetBytes(response);
                         try
                         {
-                            m.Client.GetStream().Write(response_byte, 0, response_byte.Length);
-                            m.Client.GetStream().Flush();
+                            //m.Client.GetStream().Write(response_byte, 0, response_byte.Length);
+                            //m.Client.GetStream().Flush();
+                            COM.WriteLine(response);
                         }
                         catch { }
                         break;

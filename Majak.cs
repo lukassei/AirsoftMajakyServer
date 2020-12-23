@@ -79,6 +79,18 @@ namespace Airsoft_Majaky
             Red_TimeSpan = new TimeSpan();
             Blue_TimeSpan = new TimeSpan();
         }
+        public Majak()
+        {
+            isConnected = true;
+            Red_StopWatch = new Stopwatch();
+            Blue_StopWatch = new Stopwatch();
+            Color = "N";
+            ID = 0;
+            BlueTimeInSeconds = 0;
+            RedTimeInSeconds = 0;
+            Red_TimeSpan = new TimeSpan();
+            Blue_TimeSpan = new TimeSpan();
+        }
         public TimeSpan ReturnRedTime()
         {
             TimeSpan t = new TimeSpan();
