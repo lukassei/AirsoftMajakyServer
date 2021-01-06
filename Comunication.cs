@@ -73,7 +73,7 @@ namespace Airsoft_Majaky
                     COM.DataBits = 8;
                     COM.StopBits = StopBits.One;
                     COM.BaudRate = 9600;
-                    COM.PortName = "COM8";
+                    COM.PortName = "COM7";
                     COM.Open();
                     Thread t = new Thread(HandleCOMPortInc);
                     t.Start();
@@ -272,8 +272,8 @@ namespace Airsoft_Majaky
                                 req.Sender.Blue_TimeSpan = req.Sender.Blue_TimeSpan.Subtract(TimeSpan.FromMilliseconds(Convert.ToDouble(datasplt[3])));
                             }
                         }
-                    r = new Request(9, req.Sender);
-                    RequestsToRespond.Enqueue(r);
+                    //r = new Request(9, req.Sender);
+                    //RequestsToRespond.Enqueue(r);
                     break;
             }
         }
@@ -292,7 +292,7 @@ namespace Airsoft_Majaky
                     case 1: //potvrdí arduinu/clientu připojení
                             //connection validation
                         response = String.Empty;
-                        response = string.Format("CNN:{0}:{1}:CFM:!", m.ID, m.Color);
+                        response = string.Format("CNN?{0}?{1}?{2}?CFM?!", m.ID, m.Color, m.MACAddress);
                         response_byte = null;
                         response_byte = System.Text.Encoding.ASCII.GetBytes(response);
                         try
@@ -306,7 +306,7 @@ namespace Airsoft_Majaky
                     case 2: //potvrdí arduinu/clientu změnu týmu
                             //confirms change of team
                         response = String.Empty;
-                        response = string.Format("CHGTM:{0}:{1}:CFM:!", m.ID, m.Color);
+                        response = string.Format("CHGTM?{0}?{1}?CFM?!", m.ID, m.Color);
                         response_byte = null;
                         response_byte = System.Text.Encoding.ASCII.GetBytes(response);
                         try
@@ -319,7 +319,7 @@ namespace Airsoft_Majaky
                         break;
                     case 3: //Pokud arduino/client pošle PING request odpoví zprávou "PONG" (pro ověření že spojení je aktivní)
                         response = String.Empty;
-                        response = "PONG:!";
+                        response = "PONG?!";
                         response_byte = null;
                         response_byte = System.Text.Encoding.ASCII.GetBytes(response);
                         try
@@ -332,7 +332,7 @@ namespace Airsoft_Majaky
                         break;
                     case 4:
                         response = String.Empty;
-                        response = string.Format("CHGTM:{0}:GMPAUSED:!", m.ID);
+                        response = string.Format("CHGTM?{0}?GMPAUSED?!", m.ID);
                         response_byte = null;
                         response_byte = System.Text.Encoding.ASCII.GetBytes(response);
                         try
@@ -346,7 +346,7 @@ namespace Airsoft_Majaky
                     case 5: //send game pause
                         response = String.Empty;
                         response_byte = null;
-                        response = "GAME_PAUSE:!";
+                        response = "GAME_PAUSE?!";
                         response_byte = System.Text.Encoding.ASCII.GetBytes(response);
                         foreach (Majak majak in activeClients)
                         {
@@ -366,7 +366,7 @@ namespace Airsoft_Majaky
                         {
                             response = String.Empty;
                             response_byte = null;
-                            response = string.Format("GAME_UNPAUSE:{0}:{1}:!", majak.ID, majak.Color);
+                            response = string.Format("GAME_UNPAUSE?{0}?{1}?!", majak.ID, majak.Color);
                             response_byte = System.Text.Encoding.ASCII.GetBytes(response);
                             try
                             {
@@ -380,7 +380,7 @@ namespace Airsoft_Majaky
                     case 7:
                         response = String.Empty;
                         response_byte = null;
-                        response = "GAME_END:!";
+                        response = "GAME_END?!";
                         response_byte = System.Text.Encoding.ASCII.GetBytes(response);
                         foreach (Majak majak in activeClients)
                         {
@@ -395,7 +395,7 @@ namespace Airsoft_Majaky
                         break;
                     case 8:
                         response = String.Empty;
-                        response = "PING:!";
+                        response = "PING?!";
                         response_byte = null;
                         response_byte = System.Text.Encoding.ASCII.GetBytes(response);
                         try
@@ -408,7 +408,7 @@ namespace Airsoft_Majaky
                         break;
                     case 9:
                         response = String.Empty;
-                        response = "TMCR:CFM:!";
+                        response = "TMCR?CFM?!";
                         response_byte = null;
                         response_byte = System.Text.Encoding.ASCII.GetBytes(response);
                         try

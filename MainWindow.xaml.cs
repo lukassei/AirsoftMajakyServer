@@ -55,7 +55,7 @@ namespace Airsoft_Majaky
                     }
                 }
                 // replace the IP with your system IP Address...
-                Comunication CC = new Comunication(ipaddres, 11800);
+                Comunication CC = new Comunication("192.168.137.1", 11800);
             });
             t.IsBackground = true;
             t.Start();
